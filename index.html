@@ -2,7 +2,7 @@
 	<title>htMeower</title>
 </head>
 <body>
-<center><h1>htMeower</h1><h3>version 1.1.2</h3><div id="quote"></div></center>
+<center><h1>htMeower</h1><h3>version 1.1.3</h3><div id="quote"></div></center>
 <script>const quotes = ["panic: We are hanging here...", "Now with 100% more bugs!", "Dis is one half. Press any key to continue..."]
 const random = Math.floor(Math.random() * quotes.length); // thanks stackoverflow
 
@@ -11,6 +11,10 @@ document.getElementById("quote").innerHTML = "<small><i>\"" + quotes[random] + "
 <div id="scene"><center>Loading...</center></div>
 <script>webSocket = new WebSocket("wss://server.meower.org/");
 var loggedin = false
+
+webSocket.onclose = (event) => {
+	alert("Connection lost.")
+};
 
 webSocket.onmessage = (event) => {
   console.log("INC: " + event.data);
@@ -33,10 +37,10 @@ webSocket.onmessage = (event) => {
 		webSocket.send(JSON.stringify(data));
 		console.log("OUT: " + JSON.stringify(data));
 		
-		document.getElementById("scene").innerHTML = "<center><form id='loginForm'><label for='userinput'>username: </label><input type='text' id='userinput'><br><label for='passinput'>password: </label><input type='password' id='passinput'><br><input type='button' id='submit' value='Submit' onclick='dowizard()'></form></center>"
+		document.getElementById("scene").innerHTML = "<center><label for='userinput'>username: </label><input type='text' id='userinput'><br><label for='passinput'>password: </label><input type='password' id='passinput'><br><input type='button' id='submit' value='Submit' onclick='dowizard()'></center>"
 	} else if (sentshit.val.mode == "auth") {
 			loggedin = true
-			document.getElementById("scene").innerHTML = "<center><form id='postForm'><label for='msg'>message: </label><input type='text' id='msg'><br><input type='button' id='submit' value='Post!' onclick='dopostwizard()'></form></center>"
+			document.getElementById("scene").innerHTML = "<center><label for='msg'>message: </label><input type='text' id='msg'><br><input type='button' id='submit' value='Post!' onclick='dopostwizard()'></center>"
 			console.log("Logged in!")
 	} else if (sentshit.val == "E:110 | ID conflict") {
 			alert("ID conflict. You probably logged in on another client. Refresh the page and log back in to continue.")
