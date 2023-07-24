@@ -1,0 +1,78 @@
+<head>
+	<title>Codename Onyx</title>
+</head>
+<body>
+<center><h1>Codename Onyx</h1><h3>version 1.1</h3><div id="quote"></div></center>
+<script>const quotes = ["panic: We are hanging here...", "Now with 100% more bugs!", "Dis is one half. Press any key to continue..."]
+const random = Math.floor(Math.random() * quotes.length); // thanks stackoverflow
+
+document.getElementById("quote").innerHTML = "<small><i>\"" + quotes[random] + "\"</i></small><br><br>"
+</script>
+<div id="scene">scene div</div>
+<script>webSocket = new WebSocket("wss://server.meower.org/");
+var loggedin = false
+
+webSocket.onmessage = (event) => {
+  console.log("INC: " + event.data);
+  
+  var sentshit = JSON.parse(event.data);
+  if (sentshit.val == "I:112 | Trusted Access enabled") {
+  	var data = {
+			cmd: "direct",
+	  	val: {cmd: "type", val: "js"}
+  	};
+  	
+		webSocket.send(JSON.stringify(data));
+		console.log("OUT: " + JSON.stringify(data));
+		
+		var data = {
+			cmd: "direct",
+	  	val: "meower"
+  	};
+  	
+		webSocket.send(JSON.stringify(data));
+		console.log("OUT: " + JSON.stringify(data));
+		
+		document.getElementById("scene").innerHTML = "<center><form id='loginForm'><label for='userinput'>username: </label><input type='text' id='userinput'><br><label for='passinput'>password: </label><input type='password' id='passinput'><br><input type='button' id='submit' value='Submit' onclick='dowizard()'></form></center>"
+	} else if (sentshit.val.mode == "auth") {
+			loggedin = true
+			document.getElementById("scene").innerHTML = "<center><form id='postForm'><label for='msg'>message: </label><input type='text' id='msg'><br><input type='button' id='submit' value='Post!' onclick='dopostwizard()'></form></center>"
+			console.log("Logged in!")
+	} else if (sentshit.val == "E:110 | ID conflict") {
+			alert("ID conflict. You probably logged in on another client. Refresh the page and log back in to continue.")
+	} else if (sentshit.val.post_origin == "home") {
+			if (loggedin == true) {
+				if (sentshit.val.u == "Discord") {
+					document.getElementById("scene").innerHTML += "<br><center><b><bridge title='This message has been bridged from another platform.'>[B]</bridge></b> " + sentshit.val.p + "</center>"
+				} else {
+						document.getElementById("scene").innerHTML += "<br><center>" + sentshit.val.u + ": " + sentshit.val.p + "</center>"
+				}
+			}
+	} 
+};
+
+function dowizard() {
+			console.log(document.getElementById('userinput').value);
+			var data = {
+				cmd: "direct",
+		  	val: {cmd: "authpswd", val: {username: document.getElementById('userinput').value, pswd: document.getElementById('passinput').value }}
+  		};
+  	
+			webSocket.send(JSON.stringify(data));
+			console.log("User is logging in, details will not be logged for security reasons.");
+			
+}
+		
+function dopostwizard() {
+			console.log("USER POSTED: " + document.getElementById('msg').value);
+			var data = {
+				cmd: "direct",
+		  	val: {cmd: "post_home", val: document.getElementById('msg').value}
+  		};
+  	
+			webSocket.send(JSON.stringify(data));
+			console.log("OUT: " + JSON.stringify(data));
+			
+}
+</script>
+</body>
