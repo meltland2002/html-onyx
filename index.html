@@ -2,13 +2,13 @@
 	<title>Codename Onyx</title>
 </head>
 <body>
-<center><h1>Codename Onyx</h1><h3>version 1.1</h3><div id="quote"></div></center>
+<center><h1>Codename Onyx</h1><h3>version 1.1.1</h3><div id="quote"></div></center>
 <script>const quotes = ["panic: We are hanging here...", "Now with 100% more bugs!", "Dis is one half. Press any key to continue..."]
 const random = Math.floor(Math.random() * quotes.length); // thanks stackoverflow
 
 document.getElementById("quote").innerHTML = "<small><i>\"" + quotes[random] + "\"</i></small><br><br>"
 </script>
-<div id="scene">scene div</div>
+<div id="scene"><center>Loading...</center></div>
 <script>webSocket = new WebSocket("wss://server.meower.org/");
 var loggedin = false
 
