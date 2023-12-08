@@ -1,4 +1,6 @@
 # NOTICE
+This is vulnerable to XSS.
+
 This is an archive, and may not work with future Meower updates.
 
 # html-onyx
